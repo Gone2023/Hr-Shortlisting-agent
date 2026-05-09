@@ -1,0 +1,8 @@
+venv/
+__pycache__/
+.env
+logs/
+data/*.pdf
+data/*.docx
+temp_report.pdf
+*.pyc
