@@ -11,6 +11,118 @@ This is an AI agent prototype designed to assist HR teams in evaluating candidat
 5. Copy `.env.example` to `.env` and add your Groq API key.
 6. Start the Streamlit app: `streamlit run frontend/main.py`
 
+
+## Agent Architecture Diagram
+
+```text
+                         ┌─────────────────────────────┐
+                         │         HR USER             │
+                         │ Upload JD + Resumes         │
+                         └─────────────┬───────────────┘
+                                       │
+                                       ▼
+                    ┌──────────────────────────────────┐
+                    │      STREAMLIT FRONTEND UI       │
+                    │  - File Upload                   │
+                    │  - Candidate Dashboard           │
+                    │  - Ranking Table                 │
+                    │  - Override Panel                │
+                    └─────────────┬────────────────────┘
+                                  │
+                                  ▼
+                    ┌──────────────────────────────────┐
+                    │        FASTAPI BACKEND           │
+                    │      API Routes & Services       │
+                    └─────────────┬────────────────────┘
+                                  │
+          ┌───────────────────────┼────────────────────────┐
+          │                       │                        │
+          ▼                       ▼                        ▼
+
+┌──────────────────┐  ┌──────────────────────┐  ┌──────────────────────┐
+│  JD Parser Agent │  │ Resume Parser Agent  │  │ Security Middleware  │
+│                  │  │                      │  │                      │
+│ - Extract Skills │  │ - Parse PDF/DOCX     │  │ - PII Masking        │ 
+│ - Experience     │  │ - Extract Skills     │  │ - Input Validation   │
+│ - Education      │  │ - Projects           │  │ - Prompt Sanitising  │
+│ - Keywords       │  │ - Experience         │  │  - API Key Security  │
+└─────────┬────────┘  └──────────┬───────────┘  └──────────────────────┘
+          │                      │
+          ▼                      ▼
+
+     ┌─────────────────────────────────────────────┐
+     │      STRUCTURED OUTPUT LAYER (PYDANTIC)     │
+     │                                             │
+     │  - Strict JSON Schema Validation            │
+     │  - Hallucination Reduction                  │
+     │  - Consistent Data Formatting               │
+     └──────────────────┬──────────────────────────┘
+                        │
+                        ▼
+
+     ┌─────────────────────────────────────────────┐
+     │        EMBEDDING GENERATION MODULE          │
+     │                                             │
+     │  Model: BAAI/bge-small-en-v1.5              │
+     │  Library: sentence-transformers             │
+     └──────────────────┬──────────────────────────┘
+                        │
+                        ▼
+
+             ┌──────────────────────────┐
+             │      FAISS VECTOR DB     │
+             │                          │
+             │ - Semantic Similarity    │
+             │ - Candidate Matching     │
+             └──────────┬───────────────┘
+                        │
+                        ▼
+
+     ┌─────────────────────────────────────────────┐
+     │          SCORING & EVALUATION AGENT         │
+     │                                             │
+     │  LLM: Groq Llama 3.3 70B                    │
+     │                                             │
+     │  Scoring Dimensions:                        │
+     │  - Skills Match                             │
+     │  - Experience Relevance                     │
+     │  - Education & Certifications               │
+     │  - Project/Portfolio                        │
+     │  - Communication Quality                    │
+     └──────────────────┬──────────────────────────┘
+                        │
+                        ▼
+
+          ┌────────────────────────────────┐
+          │      RANKING ENGINE            │
+          │                                │
+          │ - Weighted Score Calculation   │
+          │ - Candidate Ranking            │
+          │ - Hire / No-Hire Decision      │
+          └────────────────┬───────────────┘
+                           │
+                           ▼
+
+          ┌────────────────────────────────┐
+          │       REPORT GENERATOR         │
+          │                                │
+          │ - PDF Report                   │
+          │ - HTML Report                  │
+          │ - JSON Export                  │
+          └────────────────┬───────────────┘
+                           │
+                           ▼
+
+          ┌────────────────────────────────┐
+          │   HUMAN-IN-THE-LOOP REVIEW     │
+          │                                │
+          │ - HR Score Override            │
+          │ - Manual Review                │
+          │ - Audit Logging                │
+          └────────────────────────────────┘
+```
+
+
 ## Mandatory Technical Disclosures
 
 ### 1. LLM Chosen
